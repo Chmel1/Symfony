@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Book{% endblock %}
+
+{% block body %}
+
+<div class="position-relative"> 
+
+    <div style="position: fixed; top: 276px; left: 120px; z-index: 999;">
+        {{ include('book/_delete_form.html.twig') }}
+    </div>
+    <h1>Книга</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ book.id }}</td>
+            </tr>
+            <tr>
+                <th>Название</th>
+                <td>{{ book.title }}</td>
+            </tr>
+            <tr>
+                <th>Описание</th>
+                <td>{{ book.description }}</td>
+            </tr>
+            <tr>
+                <th>Год публикации</th>
+                <td>{{ book.publicationYear }}</td>
+            </tr>
+            <tr>
+                <th>Cover_image</th>
+                <td>{{ book.coverImage }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-primary" href="{{ path('app_book_edit', {'id': book.id}) }}">Изменить</a>
+</div>
+{% endblock %}
