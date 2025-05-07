@@ -10,6 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\String\Slugger\SluggerInterface;
+
 
 #[Route('/book')]
 final class BookController extends AbstractController
@@ -23,22 +26,38 @@ final class BookController extends AbstractController
     }
 
     #[Route('/new', name: 'app_book_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, BookRepository $bookRepository): Response
     {
         $book = new Book();
         $form = $this->createForm(BookType::class, $book);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($book);
-            $entityManager->flush();
+            $coverImage = $form->get('coverImage')->getData();
+            
+            if ($coverImage) {
+                $originalFilename = pathinfo($coverImage->getClientOriginalName(), PATHINFO_FILENAME);
+                $newFilename = uniqid().'.'.$coverImage->guessExtension();
 
-            return $this->redirectToRoute('app_book_index', [], Response::HTTP_SEE_OTHER);
+                try {
+                    $coverImage->move(
+                        $this->getParameter('cover_image_directory'),
+                        $newFilename
+                    );
+                    $book->setCoverImage($newFilename);
+                } catch (FileException $e) {
+                    // Обработка ошибки
+                }
+            }
+            $bookRepository->save($book, true);
+
+            return $this->redirectToRoute('app_book_index');
+
+            
         }
 
         return $this->render('book/new.html.twig', [
-            'book' => $book,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -51,20 +70,41 @@ final class BookController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_book_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Book $book, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Book $book, BookRepository $bookRepository, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(BookType::class, $book);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $coverImage = $form->get('coverImage')->getData();
 
-            return $this->redirectToRoute('app_book_index', [], Response::HTTP_SEE_OTHER);
+            if ($coverImage) {
+                $originalFilename = pathinfo($coverImage->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $extension = $coverImage->guessExtension() ?? 'bin';
+                $newFilename = uniqid().'.'.$extension;
+
+                try {
+                    $coverImage->move(
+                        $this->getParameter('cover_image_directory'),
+                        $newFilename
+                    );
+                    $book->setCoverImage($newFilename);
+                } catch (FileException $e) {
+                    // Обработка ошибки
+                    $this->addFlash('danger', 'Ошибка при загрузке файла: '.$e->getMessage());
+                }
+            }
+            $bookRepository->save($book, true);
+
+            return $this->redirectToRoute('app_book_index');
+
+            
         }
 
         return $this->render('book/edit.html.twig', [
             'book' => $book,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 

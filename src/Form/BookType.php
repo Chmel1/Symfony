@@ -9,6 +9,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\File;
 
 class BookType extends AbstractType
 {
@@ -21,7 +23,21 @@ class BookType extends AbstractType
             ])
             ->add('publicationYear', IntegerType::class, ['required'=> false
             ] )
-        ;
+            ->add('coverImage', FileType::class, [
+                'label' => 'Обложка (JPG или PNG)',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '2M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                        ],
+                        'mimeTypesMessage' => 'Пожалуйста, загрузите JPG или PNG файл',
+                    ])
+                    ],
+                ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
