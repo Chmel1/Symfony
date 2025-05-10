@@ -24,7 +24,7 @@ class Book
     private ?int $publication_year = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $cover_image = null;
+    private ?string $coverImage = null;
 
     public function getId(): ?int
     {
@@ -69,12 +69,12 @@ class Book
 
     public function getCoverImage(): ?string
     {
-        return $this->cover_image;
+        return $this->coverImage;
     }
 
-    public function setCoverImage(?string $cover_image): static
+    public function setCoverImage(?string $coverImage): static
     {
-        $this->cover_image = $cover_image;
+        $this->coverImage = $coverImage;
 
         return $this;
     }

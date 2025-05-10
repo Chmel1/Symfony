@@ -1,3 +1,12 @@
 body {
     background-color: skyblue;
 }
+.modal-dialog{
+    max-height: 90vh;
+    margin-top: 5vh;
+}
+
+.modal-content{
+    max-height: 100%;
+    overflow: auto;
+}

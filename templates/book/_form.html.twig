@@ -1,8 +1,11 @@
+
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8"> {# Была 6, стала 8 — шире карта #}
             <div class="card shadow rounded-4 bg-light text-dark p-4" style="min-height: 100%;">
                 {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+                {{ form_errors(form) }}
+                {{ form_widget(form._token) }} 
 
                     <div class="mb-3">
                         {{ form_label(form.title, 'Название книги', {'label_attr': {'class': 'form-label'}}) }}
@@ -18,32 +21,99 @@
 
                     <div class="mb-3">
                         {{ form_label(form.publicationYear, 'Год публикации', {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(form.publicationYear, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_widget(form.publicationYear, {'attr': {'class': 'form-control', 'id':'publicationYear'}}) }}
                         {{ form_errors(form.publicationYear) }}
                     </div>
-                    <div class="mb-3">
-                        {{ form_label(form.coverImage, 'Обложка', {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(form.coverImage, {'attr': {'class': 'form-control'}}) }}
-                        {{ form_errors(form.coverImage) }}
+                    <div class="d-flex mb-3 align-items-strat gap-3">
+                    {# Показываем текущую обложку и предпросмотр, только если редактируем книгу #}
+                        {% if book is defined %}
+                        {# Блок текущей обложки (edit) #}
+                        <div class="mb-3">
+                            {{ form_label(form.coverImage, 'Обложка', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.coverImage, {'attr': {'class': 'form-control cover-input'}}) }}
+                            {{ form_errors(form.coverImage) }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Текущая обложка:</label><br>
+                            <img src="{{ asset('uploads/' ~ book.coverImage) }}"
+                                alt="Обложка"
+                                class="img-thumbnail d-flex"
+                                style="max-width: 150px; cursor:pointer;"
+                                data-bs-toggle="modal"
+                                data-bs-target="#coverModal">
+                        </div>
+
+                        {# Модалка для текущей обложки #}
+                        <div class="modal fade" id="coverModal" tabindex="-1" aria-labelledby="coverModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
+                                <div class="modal-content bg-dark text-white">
+                                    <div class="modal-header border-0">
+                                        <h5 class="modal-title" id="coverModalLabel">Обложка</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <img src="{{ asset('uploads/' ~ book.coverImage) }}"
+                                            alt="Обложка"
+                                            class="img-fluid rounded shadow d-flex">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {# Этот блок должен быть ПРИСУТСТВУЮЩИМ ВСЕГДА — и в new, и в edit #}
+                        
+
+                        <div id="coverPreviewContainer" class=" d-none">
+                            <label class="form-label">Предпросмотр обложки:</label><br>
+                            <img id="coverPreview"
+                                src=""
+                                alt="Превью"
+                                class="img-thumbnail"
+                                style="max-width: 150px; cursor: pointer;"
+                                data-bs-toggle="modal"
+                                data-bs-target="#newCoverModal">
+                        </div>
+                        
+                        
+                        {# Модалка для новой обложки (всегда нужна) #}
+                        <div class="modal fade" id="newCoverModal" tabindex="-1" aria-labelledby="newCoverModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
+                                <div class="modal-content bg-dark text-white">
+                                    <div class="modal-header border-0">
+                                        <h5 class="modal-title" id="newCoverModalLabel">Новая обложка</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <img id="newCoverModalImage" src="" alt="Обложка" class="img-fluid rounded shadow">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    
+                {{ form_end(form) }}
 
-
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 flex-wrap">
                         <button class="btn btn-primary">{{ button_label|default('Сохранить') }}</button>
                         <a href="{{ path('app_book_index') }}" class="btn btn-primary">Вернуться к списку</a>
-                        {# Кнопка удаления внутри формы #}
-                        {% if book is defined %}
-                            {{ include('book/_delete_form.html.twig', {
-                                book: book,
-                                formClass: '',
-                                buttonClass: ''
-                            }) }}
-                        {% endif %}
-                    </div>
 
-                {{ form_end(form) }}
+                        {% if book is defined %}
+                            <form method="post" action="{{ path('app_book_delete', {'id': book.id}) }}" onsubmit="return confirm('Удалить книгу?');" data-turbo="false" class="d-inline">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ book.id) }}">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button class="btn btn-danger">Удалить</button>
+                            </form>
+                        {% endif %}
+                        
+
+                    </div>
+                
+
+                
+                </div>
             </div>
         </div>
     </div>
-</div>
+    <script src="{{ asset('script/index.js') }}" defer></script>
+
+                
+                

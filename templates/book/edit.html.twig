@@ -2,7 +2,7 @@
 {% extends 'base.html.twig' %}
 
 
-{% block title %}Edit Book{% endblock %}
+{% block title %}Изменить книгу{% endblock %}
 
 {% block body %}
     <div class="container mt-4">
@@ -10,10 +10,9 @@
             
                 <h1 class="row justify-content-center">Изменить книгу</h1>
 
-                {{ include('book/_form.html.twig', {'button_label': 'Обновить'}) }}
-
+                {{ include('book/_form.html.twig', {'button_label': 'Обновить','book' : book}) }}
                 
-            
-        
+                {# Показ миниатюры обложки и модального окна — только при редактировании #}
+                
     </div>
 {% endblock %}

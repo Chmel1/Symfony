@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Book index{% endblock %}
+{% block title %}Список книг{% endblock %}
 
 {% block body %}
     <h1>Индекс книги</h1>
@@ -12,7 +12,7 @@
                 <th>Название</th>
                 <th>Описание</th>
                 <th>Год публикации</th>
-                <th>Cover_image</th>
+                <th>Обложка</th>
                 <th>Действия</th>
             </tr>
         </thead>
@@ -25,17 +25,17 @@
                 <td>{{ book.publicationYear }}</td>
                 <td>{{ book.coverImage }}</td>
                 <td>
-                    <a class="btn btn-primary" href="{{ path('app_book_show', {'id': book.id}) }}">show</a>
-                    <a class="btn btn-primary" href="{{ path('app_book_edit', {'id': book.id}) }}">edit</a>
+                    <a class="btn btn-primary" href="{{ path('app_book_show', {'id': book.id}) }}">Показать</a>
+                    <a class="btn btn-primary" href="{{ path('app_book_edit', {'id': book.id}) }}">Изменить</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="6">no records found</td>
+                <td colspan="6">Ни одной записи не найденно</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a class="btn btn-primary" href="{{ path('app_book_new') }}">Create new</a>
+    <a class="btn btn-primary" href="{{ path('app_book_new') }}">Добавить новую книгу</a>
 {% endblock %}

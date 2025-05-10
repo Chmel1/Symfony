@@ -1,0 +1,11 @@
+.modal-body {
+    max-height: 80vh; /* не больше 80% высоты экрана */
+    overflow-y: auto;
+}
+
+.modal-body img {
+    max-height: 70vh;  /* картинка не больше 70% высоты экрана */
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
