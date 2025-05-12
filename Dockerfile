@@ -23,7 +23,7 @@ COPY . .
 # Устанавливаем зависимости Symfony
 RUN rm -rf var/cache/*
 
-RUN composer install --no-dev --optimize-autoloader -vvv
+RUN APP_ENV=prod composer install --no-dev --optimize-autoloader
 
 
 # Открываем порт для FPM
