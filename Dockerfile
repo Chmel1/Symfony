@@ -1,37 +1,30 @@
-# Используем официальный PHP 8.1 образ с FPM
 FROM php:8.3-fpm
 
-# Устанавливаем необходимые утилиты
+# Устанавливаем системные зависимости
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
-    && rm -rf /var/lib/apt/lists/*
-
-# Устанавливаем расширения PHP
-RUN docker-php-ext-install zip
-
-# Устанавливаем необходимые зависимости для Symfony
-RUN apt-get update && apt-get install -y \
+    zip \
+    libzip-dev \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql
+    && docker-php-ext-install gd pdo pdo_mysql zip \
+    && rm -rf /var/lib/apt/lists/*
 
 # Устанавливаем Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Устанавливаем рабочую директорию
+# Копируем проект
 WORKDIR /var/www/html
-
-# Копируем все файлы проекта в контейнер
 COPY . .
 
-# Устанавливаем зависимости проекта через Composer
+# Устанавливаем зависимости Symfony
 RUN composer install --no-dev --optimize-autoloader
 
-# Открываем порт для PHP-FPM
+# Открываем порт для FPM
 EXPOSE 9000
 
-# Запускаем Symfony с встроенным сервером PHP
-CMD ["php", "-S", "0.0.0.0:9000", "-t", "public"]
+# Команда запуска PHP-FPM (это важно!)
+CMD ["php-fpm"]
