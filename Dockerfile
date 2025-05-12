@@ -21,6 +21,8 @@ WORKDIR /var/www/html
 COPY . .
 
 # Устанавливаем зависимости Symfony
+RUN rm -rf var/cache/*
+
 RUN composer install --no-dev --optimize-autoloader -vvv
 
 
