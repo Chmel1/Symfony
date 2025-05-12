@@ -29,5 +29,8 @@ RUN APP_ENV=prod composer install --no-dev --optimize-autoloader
 # Открываем порт для FPM
 EXPOSE 9000
 
+
+
+
 # Команда запуска PHP-FPM (это важно!)
-CMD ["php-fpm"]
+CMD ["php", "-S", "0.0.0.0:9000", "-t", "public"]
