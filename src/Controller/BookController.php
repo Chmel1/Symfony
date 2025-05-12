@@ -129,8 +129,6 @@ final class BookController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$book->getId(), $request->getPayload()->get('_token'))) {
             $entityManager->remove($book);
             $entityManager->flush();
-            dd('Удаление сработало');
-
         }
 
         return $this->redirectToRoute('app_book_index', [], Response::HTTP_SEE_OTHER);

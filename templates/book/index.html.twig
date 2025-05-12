@@ -25,8 +25,8 @@
                 <td>{{ book.publicationYear }}</td>
                 <td>{{ book.coverImage }}</td>
                 <td>
-                    <a class="btn btn-primary" href="{{ path('app_book_show', {'id': book.id}) }}">Показать</a>
-                    <a class="btn btn-primary" href="{{ path('app_book_edit', {'id': book.id}) }}">Изменить</a>
+                    <a class="btn btn-primary mt-2" href="{{ path('app_book_show', {'id': book.id}) }}">Показать</a>
+                    <a class="btn btn-primary mt-2" href="{{ path('app_book_edit', {'id': book.id}) }}">Изменить</a>
                 </td>
             </tr>
         {% else %}
