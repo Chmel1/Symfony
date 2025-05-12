@@ -1,5 +1,14 @@
 # Используем официальный PHP 8.1 образ с FPM
-FROM php:8.2-fpm
+FROM php:8.3-fpm
+
+# Устанавливаем необходимые утилиты
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Устанавливаем расширения PHP
+RUN docker-php-ext-install zip
 
 # Устанавливаем необходимые зависимости для Symfony
 RUN apt-get update && apt-get install -y \
