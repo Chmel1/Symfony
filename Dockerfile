@@ -21,7 +21,8 @@ WORKDIR /var/www/html
 COPY . .
 
 # Устанавливаем зависимости Symfony
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader -vvv
+
 
 # Открываем порт для FPM
 EXPOSE 9000
