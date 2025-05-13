@@ -1,41 +1,141 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Список книг{% endblock %}
+{% block title %}Библиотека книг{% endblock %}
 
 {% block body %}
-    <h1>Индекс книги</h1>
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">Библиотека книг</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Название</th>
-                <th>Описание</th>
-                <th>Год публикации</th>
-                <th>Обложка</th>
-                <th>Действия</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for book in books %}
-            <tr>
-                <td>{{ book.id }}</td>
-                <td>{{ book.title }}</td>
-                <td>{{ book.description }}</td>
-                <td>{{ book.publicationYear }}</td>
-                <td>{{ book.coverImage }}</td>
-                <td>
-                    <a class="btn btn-primary mt-2" href="{{ path('app_book_show', {'id': book.id}) }}">Показать</a>
-                    <a class="btn btn-primary mt-2" href="{{ path('app_book_edit', {'id': book.id}) }}">Изменить</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">Ни одной записи не найденно</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+            {% for book in books %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm book-card">
+                        {% if book.coverImage %}
+                            <div class="cover-container">
+                                <img 
+                                    src="{{ asset('uploads/' ~ book.coverImage) }}" 
+                                    class="card-img-top book-cover" 
+                                    alt="Обложка книги {{ book.title }}"
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#coverModal{{ book.id }}">
+                            </div>
+                        {% else %}
+                            <div class="placeholder-cover bg-light d-flex align-items-center justify-content-center">
+                                <i class="fas fa-book-open fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body">
+                            <h5 class="card-title">{{ book.title }}</h5>
+                            <p class="card-text text-muted">
+                                <small>{{ book.publicationYear }} год</small>
+                            </p>
+                            <p class="card-text truncate">{{ book.description|slice(0, 100) }}...</p>
+                        </div>
+                        
+                        <div class="card-footer bg-white border-0 d-flex justify-content-between gap-2">
+                            <a href="{{ path('app_book_show', {'id': book.id}) }}" 
+                                class="btn btn-primary w-100">
+                                Подробнее
+                            </a>
+                            <a href="{{ path('app_book_edit', {'id': book.id}) }}" 
+                                class="btn btn-outline-secondary w-100">
+                                Редактировать
+                            </a>
+                        </div>
+                    </div>
 
-    <a class="btn btn-primary" href="{{ path('app_book_new') }}">Добавить новую книгу</a>
+                    <!-- Модальное окно -->
+                    <div class="modal fade" id="coverModal{{ book.id }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">{{ book.title }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <img 
+                                        src="{{ asset('uploads/' ~ book.coverImage) }}" 
+                                        class="img-fluid" 
+                                        style="max-height: 80vh; object-fit: contain;"
+                                        alt="Обложка книги {{ book.title }}"
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        В библиотеке пока нет книг
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="fixed-bottom pe-4 pb-4 text-end">
+            <a href="{{ path('app_book_new') }}" 
+                class="btn btn-primary btn-lg rounded-circle shadow"
+                title="Добавить новую книгу">
+                <i class="fas fa-plus"></i>
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .book-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .cover-container {
+            height: 300px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .book-cover {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s;
+        }
+        
+        .book-card:hover .book-cover {
+            transform: scale(1.05);
+        }
+        
+        .placeholder-cover {
+            height: 300px;
+            opacity: 0.5;
+        }
+        
+        .truncate {
+            display: -webkit-box;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .fixed-bottom {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 1000;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+    </style>
 {% endblock %}
