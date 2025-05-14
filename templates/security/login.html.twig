@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Авторизация{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow-lg">
+                <div class="card-body p-4 p-md-5">
+                    {% if error %}
+                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    {% endif %}
+
+                    {% if app.user %}
+                        <div class="alert alert-info mb-4">
+                            Вы вошли в систему как {{ app.user.userIdentifier }}, 
+                            <a href="{{ path('app_logout') }}" class="alert-link">Выйти</a>
+                        </div>
+                    {% endif %}
+
+                    <h1 class="card-title text-center mb-4">Авторизация</h1>
+
+                    {% if error %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endif %}
+                    
+                    <form method="post" action="{{ path('app_login') }}" class="needs-validation" novalidate>
+                        <div class="mb-4">
+                            <label for="inputEmail" class="form-label">Почта</label>
+                            <input 
+                                type="email" 
+                                value="{{ last_username }}" 
+                                name="_username" 
+                                id="inputEmail" 
+                                class="form-control form-control-lg"
+                                autocomplete="email" 
+                                required 
+                                autofocus
+                            >
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="inputPassword" class="form-label">Пароль</label>
+                            <input 
+                                type="password" 
+                                name="_password" 
+                                id="inputPassword" 
+                                class="form-control form-control-lg"
+                                autocomplete="current-password" 
+                                required
+                            >
+                        </div>
+
+                        <input 
+                            type="hidden" 
+                            name="_csrf_token"
+                            value="{{ csrf_token('authenticate') }}"
+                        >
+
+                        <div class="mb-4 form-check">
+                            <input 
+                                type="checkbox" 
+                                name="_remember_me" 
+                                id="rememberMe" 
+                                class="form-check-input"
+                            >
+                            <label for="rememberMe" class="form-check-label">Запомнить меня</label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-lg" type="submit">
+                                Войти
+                            </button>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <span class="text-muted">Ещё нет аккаунта? 
+                                <a href="{{ path('app_register') }}">Зарегистрируйтесь</a>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

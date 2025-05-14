@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow-lg">
+                <div class="card-body p-4 p-md-5">
+                    {% for flash_error in app.flashes('verify_email_error') %}
+                        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+                    {% endfor %}
+
+                    <h1 class="card-title text-center mb-4">Регистрация</h1>
+
+                    {{ form_errors(registrationForm) }}
+
+                    {{ form_start(registrationForm, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                    <div class="mb-3">
+                        {{ form_label(registrationForm.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control-lg' ~ (form_errors(registrationForm.email) ? ' is-invalid' : '')}}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(registrationForm.email) }}
+                        </div>
+                    </div>
+                
+                    <div class="mb-3">
+                        {{ form_label(registrationForm.plainPassword, 'Пароль', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control-lg' ~ (form_errors(registrationForm.plainPassword) ? ' is-invalid' : '')}}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(registrationForm.plainPassword) }}
+                        </div>
+                    </div>
+
+                        <div class="mb-4">
+                            {{ form_row(registrationForm.agreeTerms, {
+                                'label': 'Я принимаю условия использования',
+                                'label_attr': {'class': 'form-check-label'},
+                                'attr': {'class': 'form-check-input'},
+                                'row_attr': {'class': 'form-check'}
+                            }) }}
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                Зарегистрироваться
+                            </button>
+                        </div>
+                        <input type="hidden" 
+                        name="{{ registrationForm._token.vars.full_name }}" 
+                        value="{{ registrationForm._token.vars.value }}">
+                    {{ form_end(registrationForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

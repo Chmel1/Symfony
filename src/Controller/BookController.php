@@ -17,7 +17,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[Route('/book')]
 final class BookController extends AbstractController
 {
-    #[Route(name: 'app_book_index', methods: ['GET'])]
+    #[Route('/',name: 'app_book_index', methods: ['GET'])]
     public function index(BookRepository $bookRepository): Response
     {
         return $this->render('book/index.html.twig', [
